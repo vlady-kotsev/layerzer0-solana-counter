@@ -4,7 +4,7 @@ mod msg_codec;
 mod state;
 
 use anchor_lang::prelude::*;
-use errors::*;
+// use errors::*;
 use instructions::*;
 use oapp::{endpoint::MessagingFee, endpoint_cpi::LzAccount, LzReceiveParams};
 use state::*;
@@ -12,7 +12,7 @@ use state::*;
 declare_id!("4JSbnmWnAmRfaCWeZwFHWJrakYgrqtkXRqZ6MN4o9KiE");
 
 const LZ_RECEIVE_TYPES_SEED: &[u8] = b"LzReceiveTypes";
-const LZ_COMPOSE_TYPES_SEED: &[u8] = b"LzComposeTypes";
+// const LZ_COMPOSE_TYPES_SEED: &[u8] = b"LzComposeTypes";
 const COUNT_SEED: &[u8] = b"Count";
 const REMOTE_SEED: &[u8] = b"Remote";
 

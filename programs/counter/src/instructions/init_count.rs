@@ -32,7 +32,7 @@ impl InitCount<'_> {
         ctx.accounts.count.bump = ctx.bumps.count;
         ctx.accounts.count.endpoint_program = params.endpoint;
 
-        ctx.accounts.lz_receive_types_accounts.count = ctx.accounts.count.key();
+        // ctx.accounts.lz_receive_types_accounts.count = ctx.accounts.count.key();
 
         // calling endpoint cpi
         let register_params = RegisterOAppParams { delegate: ctx.accounts.count.admin };

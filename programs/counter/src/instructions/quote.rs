@@ -15,7 +15,7 @@ pub struct Quote<'info> {
 }
 impl<'info> Quote<'info> {
     pub fn apply(ctx: &Context<Quote>, params: &QuoteParams) -> Result<MessagingFee> {
-        let message = msg_codec::encode(params.msg_type, ctx.accounts.endpoint.eid);
+        let message = "Hello From Solana 2".as_bytes().to_vec();
 
         // calling endpoint cpi
         let quote_params = EndpointQuoteParams {

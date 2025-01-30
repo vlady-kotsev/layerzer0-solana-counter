@@ -28,14 +28,26 @@ impl LzReceiveTypes<'_> {
         let count = ctx.accounts.count.key();
 
         // The second account is the remote account, we find it by the params.src_eid.
-        let seeds = [REMOTE_SEED, &count.to_bytes(), &params.src_eid.to_be_bytes()];
+        let seeds = [
+            REMOTE_SEED,
+            &count.to_bytes(),
+            &params.src_eid.to_be_bytes(),
+        ];
         let (remote, _) = Pubkey::find_program_address(&seeds, ctx.program_id);
 
         let mut accounts = vec![
             // count
-            LzAccount { pubkey: count, is_signer: false, is_writable: true },
+            LzAccount {
+                pubkey: count,
+                is_signer: false,
+                is_writable: true,
+            },
             // remote
-            LzAccount { pubkey: remote, is_signer: false, is_writable: false },
+            LzAccount {
+                pubkey: remote,
+                is_signer: false,
+                is_writable: false,
+            },
         ];
 
         // append the accounts for the clear ix
@@ -49,18 +61,18 @@ impl LzReceiveTypes<'_> {
         accounts.extend(accounts_for_clear);
 
         // if the message type is composed, we need to append the accounts for the composing ix
-        let is_composed = msg_codec::msg_type(&params.message) == msg_codec::COMPOSED_TYPE;
-        if is_composed {
-            let accounts_for_composing = get_accounts_for_send_compose(
-                ENDPOINT_ID,
-                &count,
-                &count, // self
-                &params.guid,
-                0,
-                &params.message,
-            );
-            accounts.extend(accounts_for_composing);
-        }
+        // let is_composed = msg_codec::msg_type(&params.message) == msg_codec::COMPOSED_TYPE;
+        // if is_composed {
+        //     let accounts_for_composing = get_accounts_for_send_compose(
+        //         ENDPOINT_ID,
+        //         &count,
+        //         &count, // self
+        //         &params.guid,
+        //         0,
+        //         &params.message,
+        //     );
+        //     accounts.extend(accounts_for_composing);
+        // }
 
         Ok(accounts)
     }

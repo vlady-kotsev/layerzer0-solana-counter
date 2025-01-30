@@ -23,8 +23,12 @@ pub struct Increment<'info> {
 }
 impl<'info> Increment<'info> {
     pub fn apply(ctx: &mut Context<Increment>, params: &IncrementParams) -> Result<()> {
-        let message = msg_codec::encode(params.msg_type, ctx.accounts.endpoint.eid);
-        let seeds: &[&[u8]] = &[COUNT_SEED, &[ctx.accounts.count.id], &[ctx.accounts.count.bump]];
+        let message = "Hello From Solana 2".as_bytes().to_vec();
+        let seeds: &[&[u8]] = &[
+            COUNT_SEED,
+            &[ctx.accounts.count.id],
+            &[ctx.accounts.count.bump],
+        ];
 
         // calling endpoint cpi
         let send_params = SendParams {

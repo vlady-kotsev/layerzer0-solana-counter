@@ -226,10 +226,6 @@
     },
     {
       "name": "LzReceiveTypesAccounts",
-      "docs": [
-        "LzReceiveTypesAccounts includes accounts that are used in the LzReceiveTypes",
-        "instruction."
-      ],
       "type": {
         "kind": "struct",
         "fields": [
@@ -454,7 +450,7 @@
   "errors": [
     {
       "code": 6000,
-      "name": "InvalidMessageType"
+      "name": "InvalidRemote"
     }
   ],
   "metadata": {

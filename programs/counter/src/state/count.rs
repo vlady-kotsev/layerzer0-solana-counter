@@ -1,6 +1,7 @@
 use crate::*;
 
 #[account]
+#[derive(InitSpace)]
 pub struct Count {
     pub id: u8,
     pub admin: Pubkey,
@@ -11,27 +12,15 @@ pub struct Count {
 }
 
 impl Count {
-    pub const SIZE: usize = 8 + std::mem::size_of::<Self>();
+    pub const SIZE: usize = 8 + Self::INIT_SPACE;
 }
 
-/// LzReceiveTypesAccounts includes accounts that are used in the LzReceiveTypes
-/// instruction.
 #[account]
+#[derive(InitSpace)]
 pub struct LzReceiveTypesAccounts {
     pub count: Pubkey,
 }
 
 impl LzReceiveTypesAccounts {
-    pub const SIZE: usize = 8 + std::mem::size_of::<Self>();
-}
-
-/// LzComposeTypesAccounts includes accounts that are used in the LzComposeTypes
-/// instruction.
-#[account]
-pub struct LzComposeTypesAccounts {
-    pub count: Pubkey,
-}
-
-impl LzComposeTypesAccounts {
-    pub const SIZE: usize = 8 + std::mem::size_of::<Self>();
+    pub const SIZE: usize = 8 + Self::INIT_SPACE;
 }

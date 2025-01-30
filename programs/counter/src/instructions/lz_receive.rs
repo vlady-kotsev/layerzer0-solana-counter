@@ -1,10 +1,9 @@
 use crate::*;
 use anchor_lang::prelude::*;
+use errors::CounterError::InvalidRemote;
 use oapp::{
     endpoint::{
-        cpi::accounts::Clear,
-        instructions::{ClearParams, SendComposeParams},
-        ConstructCPIContext, ID as ENDPOINT_ID,
+        cpi::accounts::Clear, instructions::ClearParams, ConstructCPIContext, ID as ENDPOINT_ID,
     },
     LzReceiveParams,
 };
@@ -17,19 +16,26 @@ pub struct LzReceive<'info> {
     #[account(
         seeds = [REMOTE_SEED, &count.key().to_bytes(), &params.src_eid.to_be_bytes()],
         bump = remote.bump,
-        constraint = params.sender == remote.address
+        constraint = params.sender == remote.address @ InvalidRemote
     )]
     pub remote: Account<'info, Remote>,
 }
 
 impl LzReceive<'_> {
     pub fn apply(ctx: &mut Context<LzReceive>, params: &LzReceiveParams) -> Result<()> {
-        let seeds: &[&[u8]] =
-            &[COUNT_SEED, &ctx.accounts.count.id.to_be_bytes(), &[ctx.accounts.count.bump]];
+        let accounts_for_clear = if ctx.remaining_accounts.len() >= Clear::MIN_ACCOUNTS_LEN {
+            &ctx.remaining_accounts[0..Clear::MIN_ACCOUNTS_LEN]
+        } else {
+            &ctx.remaining_accounts[0..ctx.remaining_accounts.len()]
+        };
 
-        // the first 9 accounts are for clear()
-        let accounts_for_clear = &ctx.remaining_accounts[0..Clear::MIN_ACCOUNTS_LEN];
-        let _ = oapp::endpoint_cpi::clear(
+        let seeds: &[&[u8]] = &[
+            COUNT_SEED,
+            &ctx.accounts.count.id.to_be_bytes(),
+            &[ctx.accounts.count.bump],
+        ];
+
+        oapp::endpoint_cpi::clear(
             ENDPOINT_ID,
             ctx.accounts.count.key(),
             accounts_for_clear,
@@ -44,28 +50,8 @@ impl LzReceive<'_> {
             },
         )?;
 
-        let msg_type = msg_codec::msg_type(&params.message);
-        match msg_type {
-            msg_codec::VANILLA_TYPE => ctx.accounts.count.count += 1,
-            msg_codec::COMPOSED_TYPE => {
-                ctx.accounts.count.count += 1;
+        ctx.accounts.count.count += 1;
 
-                oapp::endpoint_cpi::send_compose(
-                    ENDPOINT_ID,
-                    ctx.accounts.count.key(),
-                    &ctx.remaining_accounts[Clear::MIN_ACCOUNTS_LEN..],
-                    seeds,
-                    SendComposeParams {
-                        to: ctx.accounts.count.key(), // self
-                        guid: params.guid,
-                        index: 0,
-                        message: params.message.clone(),
-                    },
-                )?;
-            },
-            // ABA_TYPE & COMPOSED_ABA_TYPE are not supported
-            _ => return Err(CounterError::InvalidMessageType.into()),
-        }
         Ok(())
     }
 }

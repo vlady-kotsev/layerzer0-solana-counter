@@ -20,23 +20,23 @@ import { signer } from "./common";
 import { remotePeers } from "./common";
 
 (async () => {
+  await initCounter(connection, signer, signer);
   for (const [remoteStr, remotePeer] of Object.entries(remotePeers)) {
     const remotePeerBytes = arrayify(hexZeroPad(remotePeer, 32));
     const remote = parseInt(remoteStr) as EndpointId;
 
     await setPeers(connection, signer, remote, remotePeerBytes);
-    // await initSendLibrary(connection, signer, remote);
-    // await setSendLibrary(connection, signer, remote);
+    await initSendLibrary(connection, signer, remote);
+    await setSendLibrary(connection, signer, remote);
 
-    // await initReceiveLibrary(connection, signer, remote);
-    // await setReceiveLibrary(connection, signer, remote);
+    await initReceiveLibrary(connection, signer, remote);
+    await setReceiveLibrary(connection, signer, remote);
 
-    // await initOappNonce(connection, signer, remote, remotePeerBytes);
-    // await initUlnConfig(connection, signer, signer, remote);
-    // await setOappExecutor(connection, signer, remote);
+    await initOappNonce(connection, signer, remote, remotePeerBytes);
+    await initUlnConfig(connection, signer, signer, remote);
+    await setOappExecutor(connection, signer, remote);
   }
-  //   await initCounter(connection, signer, signer);
-  //   await getCount(connection);
+
   console.log("Done");
 })();
 
@@ -209,7 +209,9 @@ async function setSendLibrary(
     remote
   );
   const current = sendLib ? sendLib.msgLib.toBase58() : "";
+
   const [expectedSendLib] = ulnProgram.deriver.messageLib();
+
   const expected = expectedSendLib.toBase58();
   if (current === expected) {
     return Promise.resolve();
@@ -257,6 +259,7 @@ async function setReceiveLibrary(
   if (current === expected) {
     return Promise.resolve();
   }
+
   const ix = await endpointProgram.setReceiveLibrary(
     admin.publicKey,
     id,

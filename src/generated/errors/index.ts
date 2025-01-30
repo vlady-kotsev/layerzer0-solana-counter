@@ -12,27 +12,24 @@ const createErrorFromCodeLookup: Map<number, () => ErrorWithCode> = new Map()
 const createErrorFromNameLookup: Map<string, () => ErrorWithCode> = new Map()
 
 /**
- * InvalidMessageType: ''
+ * InvalidRemote: ''
  *
  * @category Errors
  * @category generated
  */
-export class InvalidMessageTypeError extends Error {
+export class InvalidRemoteError extends Error {
   readonly code: number = 0x1770
-  readonly name: string = 'InvalidMessageType'
+  readonly name: string = 'InvalidRemote'
   constructor() {
     super('')
     if (typeof Error.captureStackTrace === 'function') {
-      Error.captureStackTrace(this, InvalidMessageTypeError)
+      Error.captureStackTrace(this, InvalidRemoteError)
     }
   }
 }
 
-createErrorFromCodeLookup.set(0x1770, () => new InvalidMessageTypeError())
-createErrorFromNameLookup.set(
-  'InvalidMessageType',
-  () => new InvalidMessageTypeError()
-)
+createErrorFromCodeLookup.set(0x1770, () => new InvalidRemoteError())
+createErrorFromNameLookup.set('InvalidRemote', () => new InvalidRemoteError())
 
 /**
  * Attempts to resolve a custom program error from the provided error code.
